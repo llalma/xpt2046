@@ -303,12 +303,14 @@ where
     ) -> Result<(), Error<SPI::Error>> {
         match self.screen_state {
             TouchScreenState::IDLE => {
+                println!("is idle");
                 if self.operation_mode == TouchScreenOperationMode::CALIBRATION && self.irq.is_low()
                 {
                     self.screen_state = TouchScreenState::PRESAMPLING;
                 }
             }
             TouchScreenState::PRESAMPLING => {
+                println!("is sampling");
                 if self.irq.is_high() {
                     self.screen_state = TouchScreenState::RELEASED
                 }
@@ -321,6 +323,7 @@ where
                 }
             }
             TouchScreenState::TOUCHED => {
+                println!("is Touched");
                 let point_sample = self.read_touch_point()?;
                 self.ts.samples[self.ts.counter] = point_sample;
                 self.ts.counter += 1;
@@ -334,6 +337,7 @@ where
                 }
             }
             TouchScreenState::RELEASED => {
+                println!("is released");
                 self.screen_state = TouchScreenState::IDLE;
                 self.ts.counter = 0;
                 /*
